@@ -1,12 +1,12 @@
 const SISTEMAS = [
-  {
-    id: "cusho_70_rpt",
-    nombre: "CUSHO 70 RPT",
-    descripcionCorta: "Sistema batiente con RPT 25 mm",
+   {
+    id: "AWS 60",
+    nombre: "AWS 60",
+    descripcionCorta: "Sistema batiente con RPT",
 
     usos: ["ventana", "balconera"],
     aperturas: ["batiente", "oscilobatiente", "fijo"],
-    estilos: ["estandar", "hoja_oculta"],
+    estilos: ["estandar"],
 
     uw_max: 1.6,
     rw_min: 36,
@@ -19,7 +19,78 @@ const SISTEMAS = [
     rc2: true,
     rc3: false,
 
-    descripcion: "Carpintería de aluminio con rotura de puente térmico de 25 mm, adecuada para ventanas y balconeras batientes.",
+    descripcion: "Carpintería de aluminio con rotura de puente térmico de 70 mm de espesor de hoja, adecuada para ventanas y balconeras batientes.",
+
+    prestaciones: [
+      ["Profundidad de marco", "60 mm"],
+      ["RPT poliamida", "≥ 25 mm"],
+      ["Transmitancia Uw", "Hasta 1.6 W/m²K"],
+      ["Atenuación acústica", "Desde 36 dB"],
+      ["Permeabilidad al aire", "Clase 4"],
+      ["Estanqueidad al agua", "Clase 5"]
+    ],
+
+    barras: [72, 70, 75],
+
+    docs: ["ficha", "detalles_cad", "bim", "dop", "marcadoCE", "pliego"]
+  },
+   {
+    id: "AWS 60BS",
+    nombre: "AWS 60 bs",
+    descripcionCorta: "Sistema de hoja oculta",
+
+    usos: ["ventana", "balconera"],
+    aperturas: ["batiente", "oscilobatiente", "fijo"],
+    estilos: ["hoja oculta"],
+
+    uw_max: 1.6,
+    rw_min: 36,
+    agua_clase: 5,
+    aire_clase: 4,
+    viento_clase: "A3",
+
+    rpt: true,
+    passivhaus: false,
+    rc2: true,
+    rc3: false,
+
+    descripcion: "Carpintería de aluminio con rotura de puente térmico de 60 mm de espesor de hoja, con hoja oculta, adecuada para ventanas y balconeras batientes.",
+
+    prestaciones: [
+      ["Profundidad de marco", "60 mm"],
+      ["RPT poliamida", "≥ 25 mm"],
+      ["Transmitancia Uw", "Hasta 1.6 W/m²K"],
+      ["Atenuación acústica", "Desde 36 dB"],
+      ["Permeabilidad al aire", "Clase 4"],
+      ["Estanqueidad al agua", "Clase 5"]
+    ],
+
+    barras: [72, 70, 75],
+
+    docs: ["ficha", "detalles_cad", "bim", "dop", "marcadoCE", "pliego"]
+  },
+  
+  {
+    id: "AWS 70",
+    nombre: "AWS 70",
+    descripcionCorta: "Sistema batiente con RPT 25 mm",
+
+    usos: ["ventana", "balconera"],
+    aperturas: ["batiente", "oscilobatiente", "fijo"],
+    estilos: ["estandar"],
+
+    uw_max: 1.6,
+    rw_min: 36,
+    agua_clase: 5,
+    aire_clase: 4,
+    viento_clase: "A3",
+
+    rpt: true,
+    passivhaus: false,
+    rc2: true,
+    rc3: false,
+
+    descripcion: "Carpintería de aluminio con rotura de puente térmico de 70 mm de espesor de hoja, adecuada para ventanas y balconeras batientes.",
 
     prestaciones: [
       ["Profundidad de marco", "70 mm"],
