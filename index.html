@@ -1,0 +1,1309 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CUSHO · Prescriptor de Sistemas</title>
+<style>
+  :root {
+    --verde: #00B140;
+    --verde-dark: #008F32;
+    --verde-light: #E6F7ED;
+    --negro: #0A0A0A;
+    --gris-oscuro: #1C1C1C;
+    --gris-medio: #3A3A3A;
+    --gris-claro: #F4F4F4;
+    --gris-borde: #E0E0E0;
+    --blanco: #FFFFFF;
+    --sombra: 0 4px 24px rgba(0,0,0,0.08);
+    --sombra-hover: 0 8px 40px rgba(0,177,64,0.15);
+    --radio: 12px;
+    --radio-lg: 20px;
+    --transicion: all 0.25s ease;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: var(--gris-claro); color: var(--negro); min-height: 100vh; }
+
+  /* HEADER */
+  header { background: var(--negro); padding: 0 40px; height: 64px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 16px rgba(0,0,0,0.3); }
+  .logo { font-size: 26px; font-weight: 800; color: var(--blanco); letter-spacing: 4px; text-transform: uppercase; position: relative; }
+  .logo::after { content: ''; display: block; height: 3px; background: var(--verde); border-radius: 2px; margin-top: 2px; }
+  .header-tag { font-size: 11px; color: #888; letter-spacing: 2px; text-transform: uppercase; }
+
+  /* LAYOUT */
+  .app-container { max-width: 960px; margin: 0 auto; padding: 40px 24px 80px; }
+
+  /* PROGRESS */
+  .progress-container { margin-bottom: 40px; }
+  .progress-steps { display: flex; align-items: center; margin-bottom: 12px; }
+  .step-item { display: flex; align-items: center; flex: 1; }
+  .step-circle { width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--gris-borde); background: var(--blanco); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: #AAA; flex-shrink: 0; transition: var(--transicion); position: relative; z-index: 1; }
+  .step-circle.active { border-color: var(--verde); background: var(--verde); color: var(--blanco); box-shadow: 0 0 0 4px rgba(0,177,64,0.15); }
+  .step-circle.done { border-color: var(--verde); background: var(--verde-light); color: var(--verde); }
+  .step-circle.done::after { content: '✓'; font-size: 14px; font-weight: 700; }
+  .step-circle.done span { display: none; }
+  .step-line { flex: 1; height: 2px; background: var(--gris-borde); transition: var(--transicion); }
+  .step-line.done { background: var(--verde); }
+  .step-labels { display: flex; justify-content: space-between; }
+  .step-label { font-size: 10px; color: #AAA; text-transform: uppercase; letter-spacing: 1px; text-align: center; flex: 1; transition: var(--transicion); }
+  .step-label.active { color: var(--verde); font-weight: 700; }
+  .step-label.done { color: var(--gris-medio); }
+
+  /* CARD */
+  .card { background: var(--blanco); border-radius: var(--radio-lg); box-shadow: var(--sombra); padding: 40px; margin-bottom: 24px; border: 1px solid var(--gris-borde); }
+  .card-header { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 32px; }
+  .card-icon { width: 48px; height: 48px; background: var(--verde-light); border-radius: var(--radio); display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+  .card-title { font-size: 22px; font-weight: 700; color: var(--negro); margin-bottom: 4px; }
+  .card-subtitle { font-size: 14px; color: #888; line-height: 1.5; }
+
+  /* FORM */
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .form-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .form-grid.cols-1 { grid-template-columns: 1fr; }
+  .form-group { display: flex; flex-direction: column; gap: 8px; }
+  .form-group.full { grid-column: 1 / -1; }
+  label { font-size: 12px; font-weight: 600; color: var(--gris-medio); text-transform: uppercase; letter-spacing: 0.8px; }
+  input[type="number"], input[type="text"], select {
+    height: 46px; border: 2px solid var(--gris-borde); border-radius: var(--radio);
+    padding: 0 14px; font-size: 15px; color: var(--negro); background: var(--blanco);
+    transition: var(--transicion); outline: none; -webkit-appearance: none; width: 100%;
+  }
+  input[type="number"]:focus, input[type="text"]:focus, select:focus { border-color: var(--verde); box-shadow: 0 0 0 3px rgba(0,177,64,0.1); }
+  select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='[w3.org](http://www.w3.org/2000/svg)' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; cursor: pointer;
+  }
+  .input-unit { position: relative; }
+  .input-unit input { padding-right: 48px; }
+  .unit-label { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); font-size: 12px; font-weight: 600; color: #AAA; pointer-events: none; }
+
+  /* OPTION CARDS */
+  .option-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
+  .option-card { border: 2px solid var(--gris-borde); border-radius: var(--radio); padding: 16px 12px; text-align: center; cursor: pointer; transition: var(--transicion); background: var(--blanco); user-select: none; }
+  .option-card:hover { border-color: var(--verde); background: var(--verde-light); transform: translateY(-2px); box-shadow: var(--sombra-hover); }
+  .option-card.selected { border-color: var(--verde); background: var(--verde-light); box-shadow: 0 0 0 1px var(--verde); }
+  .option-card.selected .option-label { color: var(--verde-dark); font-weight: 700; }
+  .option-icon { font-size: 28px; margin-bottom: 8px; display: block; }
+  .option-label { font-size: 12px; font-weight: 600; color: var(--gris-medio); line-height: 1.3; }
+
+  /* PERF */
+  .perf-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .perf-item { border: 2px solid var(--gris-borde); border-radius: var(--radio); padding: 16px; transition: var(--transicion); }
+  .perf-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .perf-name { font-size: 13px; font-weight: 600; color: var(--gris-medio); }
+  .perf-value { font-size: 13px; font-weight: 700; color: var(--verde); background: var(--verde-light); padding: 2px 10px; border-radius: 20px; min-width: 70px; text-align: center; }
+  input[type="range"] { -webkit-appearance: none; width: 100%; height: 4px; border-radius: 2px; background: var(--gris-borde); outline: none; cursor: pointer; }
+  input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%; background: var(--verde); border: 2px solid var(--blanco); box-shadow: 0 2px 6px rgba(0,177,64,0.4); cursor: pointer; }
+
+  /* CHIPS */
+  .chip-group { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { padding: 8px 18px; border: 2px solid var(--gris-borde); border-radius: 50px; font-size: 13px; font-weight: 600; color: #666; cursor: pointer; transition: var(--transicion); user-select: none; background: var(--blanco); }
+  .chip:hover { border-color: var(--verde); color: var(--verde); }
+  .chip.selected { border-color: var(--verde); background: var(--verde); color: var(--blanco); }
+
+  /* NAV */
+  .nav-buttons { display: flex; justify-content: space-between; align-items: center; margin-top: 32px; gap: 12px; }
+  .btn { height: 50px; padding: 0 32px; border-radius: var(--radio); font-size: 15px; font-weight: 700; cursor: pointer; transition: var(--transicion); border: none; display: flex; align-items: center; gap: 8px; letter-spacing: 0.3px; }
+  .btn-primary { background: var(--verde); color: var(--blanco); box-shadow: 0 4px 16px rgba(0,177,64,0.3); }
+  .btn-primary:hover { background: var(--verde-dark); transform: translateY(-2px); box-shadow: 0 6px 24px rgba(0,177,64,0.4); }
+  .btn-secondary { background: var(--blanco); color: var(--gris-medio); border: 2px solid var(--gris-borde); }
+  .btn-secondary:hover { border-color: var(--gris-medio); color: var(--negro); }
+
+  /* ASESOR CARD */
+  .asesor-card { background: var(--negro); border-radius: var(--radio); padding: 20px 24px; display: flex; align-items: center; gap: 16px; margin-top: 20px; }
+  .asesor-avatar { width: 48px; height: 48px; background: var(--verde); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+  .asesor-info { flex: 1; }
+  .asesor-label { font-size: 10px; color: #888; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 2px; }
+  .asesor-name { font-size: 16px; font-weight: 700; color: var(--blanco); margin-bottom: 2px; }
+  .asesor-zona { font-size: 12px; color: var(--verde); }
+  .asesor-contact { display: flex; flex-direction: column; gap: 4px; text-align: right; }
+  .asesor-tel { font-size: 13px; color: var(--blanco); font-weight: 600; }
+  .asesor-email { font-size: 12px; color: #888; }
+  .asesor-card.hidden { display: none; }
+
+  /* ZONA BADGE */
+  .zona-badge { display: inline-flex; align-items: center; gap: 6px; background: var(--verde-light); border: 1px solid rgba(0,177,64,0.3); border-radius: 8px; padding: 8px 14px; font-size: 13px; font-weight: 600; color: var(--verde-dark); margin-top: 10px; }
+
+  /* SIDEBAR */
+  .layout-with-sidebar { display: grid; grid-template-columns: 1fr 280px; gap: 24px; align-items: start; }
+  .sidebar-card { background: var(--blanco); border: 1px solid var(--gris-borde); border-radius: var(--radio-lg); padding: 24px; position: sticky; top: 88px; box-shadow: var(--sombra); }
+  .sidebar-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: #AAA; margin-bottom: 16px; }
+  .summary-row { display: flex; justify-content: space-between; align-items: flex-start; padding: 8px 0; border-bottom: 1px solid var(--gris-borde); gap: 8px; }
+  .summary-row:last-child { border-bottom: none; }
+  .summary-key { font-size: 12px; color: #888; flex-shrink: 0; }
+  .summary-val { font-size: 12px; font-weight: 600; color: var(--negro); text-align: right; }
+
+  /* RESULT */
+  .result-hero { background: linear-gradient(135deg, var(--negro) 0%, #1a1a1a 100%); border-radius: var(--radio-lg); padding: 40px; color: var(--blanco); margin-bottom: 28px; position: relative; overflow: hidden; }
+  .result-hero::before { content: ''; position: absolute; top: -40px; right: -40px; width: 220px; height: 220px; background: radial-gradient(circle, rgba(0,177,64,0.2) 0%, transparent 70%); border-radius: 50%; }
+  .result-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(0,177,64,0.2); border: 1px solid rgba(0,177,64,0.4); border-radius: 20px; padding: 4px 14px; font-size: 11px; font-weight: 700; color: var(--verde); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 16px; }
+  .result-product-name { font-size: 30px; font-weight: 800; margin-bottom: 6px; letter-spacing: -0.5px; }
+  .result-series { font-size: 13px; color: #AAA; margin-bottom: 24px; letter-spacing: 0.5px; }
+  .result-specs { display: flex; gap: 28px; flex-wrap: wrap; }
+  .result-spec { display: flex; flex-direction: column; gap: 2px; }
+  .spec-value { font-size: 20px; font-weight: 700; color: var(--verde); }
+  .spec-key { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 1px; }
+
+  /* MATCH INDICATOR */
+  .match-bar { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+  .match-label { font-size: 12px; color: #888; white-space: nowrap; }
+  .match-track { flex: 1; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; }
+  .match-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--verde), #00e060); transition: width 1.2s ease; }
+  .match-pct { font-size: 14px; font-weight: 700; color: var(--verde); white-space: nowrap; }
+
+  /* DOCS */
+  .docs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 14px; margin-top: 20px; }
+  .doc-card { border: 2px solid var(--gris-borde); border-radius: var(--radio); padding: 20px 16px; display: flex; flex-direction: column; align-items: center; gap: 10px; cursor: pointer; transition: var(--transicion); background: var(--blanco); text-align: center; }
+  .doc-card:hover { border-color: var(--verde); background: var(--verde-light); transform: translateY(-3px); box-shadow: var(--sombra-hover); }
+  .doc-icon { width: 50px; height: 50px; border-radius: var(--radio); display: flex; align-items: center; justify-content: center; font-size: 22px; }
+  .doc-icon.pdf { background: #FEE8E8; }
+  .doc-icon.dwg { background: #E8F0FE; }
+  .doc-icon.doc { background: #FFF4E8; }
+  .doc-icon.bim { background: #F0E8FE; }
+  .doc-name { font-size: 13px; font-weight: 700; color: var(--negro); line-height: 1.3; }
+  .doc-type { font-size: 10px; color: #AAA; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+
+  /* PERF TABLE */
+  .perf-table { width: 100%; border-collapse: collapse; }
+  .perf-table tr { border-bottom: 1px solid var(--gris-borde); }
+  .perf-table tr:last-child { border-bottom: none; }
+  .perf-table td { padding: 11px 4px; font-size: 14px; }
+  .perf-table td:first-child { color: #666; }
+  .perf-table td:last-child { font-weight: 700; color: var(--negro); text-align: right; }
+  .perf-bar-row td { padding: 3px 4px 10px; }
+  .perf-bar-bg { height: 5px; background: var(--gris-borde); border-radius: 3px; overflow: hidden; }
+  .perf-bar-fill { height: 100%; background: linear-gradient(90deg, var(--verde), var(--verde-dark)); border-radius: 3px; transition: width 1s ease; }
+
+  /* HIGHLIGHT */
+  .highlight-box { background: var(--verde-light); border: 1px solid rgba(0,177,64,0.2); border-left: 4px solid var(--verde); border-radius: var(--radio); padding: 18px 22px; font-size: 14px; color: var(--gris-oscuro); line-height: 1.7; }
+  .highlight-box strong { color: var(--verde-dark); }
+
+  /* ACTIONS */
+  .action-bar { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 28px; }
+  .btn-download { background: var(--negro); color: var(--blanco); height: 46px; padding: 0 22px; border-radius: var(--radio); font-size: 14px; font-weight: 700; cursor: pointer; border: none; display: flex; align-items: center; gap: 8px; transition: var(--transicion); text-decoration: none; }
+  .btn-download:hover { background: #333; transform: translateY(-2px); }
+  .btn-restart { background: transparent; color: var(--verde); height: 46px; padding: 0 22px; border-radius: var(--radio); font-size: 14px; font-weight: 700; cursor: pointer; border: 2px solid var(--verde); display: flex; align-items: center; gap: 8px; transition: var(--transicion); }
+  .btn-restart:hover { background: var(--verde-light); }
+
+  /* MISC */
+  .step-screen { display: none; }
+  .step-screen.active { display: block; animation: fadeInUp 0.3s ease; }
+  .divider { height: 1px; background: var(--gris-borde); margin: 28px 0; }
+  .section-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: #BBB; margin-bottom: 16px; }
+  .tag-zona { display: inline-block; background: var(--verde); color: var(--blanco); font-size: 11px; font-weight: 700; padding: 2px 10px; border-radius: 20px; margin-left: 8px; vertical-align: middle; }
+  .info-note { font-size: 12px; color: #999; margin-top: 8px; line-height: 1.5; }
+
+  @keyframes fadeInUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+
+  @media (max-width: 768px) {
+    header { padding: 0 20px; }
+    .app-container { padding: 24px 16px 60px; }
+    .card { padding: 24px; }
+    .form-grid, .form-grid.cols-3 { grid-template-columns: 1fr; }
+    .layout-with-sidebar { grid-template-columns: 1fr; }
+    .sidebar-card { position: static; }
+    .perf-grid { grid-template-columns: 1fr; }
+    .option-grid { grid-template-columns: repeat(2, 1fr); }
+    .docs-grid { grid-template-columns: 1fr 1fr; }
+    .result-specs { gap: 16px; }
+    .result-product-name { font-size: 22px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">CUSHO</div>
+  <span class="header-tag">Prescriptor de Sistemas · Aluminio</span>
+</header>
+
+<div class="app-container">
+
+  <!-- PROGRESS BAR -->
+  <div class="progress-container">
+    <div class="progress-steps">
+      <div class="step-item">
+        <div class="step-circle active" id="sc1"><span>1</span></div>
+        <div class="step-line" id="sl1"></div>
+      </div>
+      <div class="step-item">
+        <div class="step-circle" id="sc2"><span>2</span></div>
+        <div class="step-line" id="sl2"></div>
+      </div>
+      <div class="step-item">
+        <div class="step-circle" id="sc3"><span>3</span></div>
+        <div class="step-line" id="sl3"></div>
+      </div>
+      <div class="step-item">
+        <div class="step-circle" id="sc4"><span>4</span></div>
+        <div class="step-line" id="sl4" style="display:none"></div>
+      </div>
+    </div>
+    <div class="step-labels">
+      <div class="step-label active" id="slb1">Proyecto</div>
+      <div class="step-label" id="slb2">Dimensiones</div>
+      <div class="step-label" id="slb3">Prestaciones</div>
+      <div class="step-label" id="slb4">Resultado</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       PASO 1 — PROYECTO
+  ══════════════════════════════════════════ -->
+  <div class="step-screen active" id="step1">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">🏗️</div>
+        <div>
+          <div class="card-title">Datos del proyecto</div>
+          <div class="card-subtitle">Información general para personalizar la recomendación y asignarte un asesor técnico CUSHO</div>
+        </div>
+      </div>
+
+      <div class="section-label">Información general</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Nombre del proyecto</label>
+          <input type="text" id="proyectoNombre" placeholder="Ej: Residencial Las Arenas">
+        </div>
+        <div class="form-group">
+          <label>Tipología</label>
+          <select id="tipologia">
+            <option value="">Seleccionar…</option>
+            <option value="unifamiliar">Vivienda unifamiliar</option>
+            <option value="plurifamiliar">Edificio plurifamiliar</option>
+            <option value="oficinas">Oficinas / Corporativo</option>
+            <option value="hotelero">Hotelero</option>
+            <option value="comercial">Comercial / Retail</option>
+            <option value="sanitario">Sanitario / Educativo</option>
+            <option value="industrial">Industrial / Logístico</option>
+            <option value="rehabilitacion">Rehabilitación</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <div class="section-label">Ubicación del proyecto</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Código postal</label>
+          <input type="text" id="codigoPostal" placeholder="Ej: 28001" maxlength="5"
+            oninput="handleCP(this.value)">
+          <div class="info-note">Usamos el código postal para identificar la zona climática CTE y asignarte el asesor técnico de tu área.</div>
+        </div>
+        <div class="form-group" id="zonaResultado" style="justify-content:flex-end">
+          <!-- Zona y asesor aparecen aquí dinámicamente -->
+        </div>
+      </div>
+
+      <div id="asesorCard" class="asesor-card hidden">
+        <div class="asesor-avatar">👤</div>
+        <div class="asesor-info">
+          <div class="asesor-label">Tu asesor técnico CUSHO</div>
+          <div class="asesor-name" id="asesorNombre">—</div>
+          <div class="asesor-zona" id="asesorZona">—</div>
+        </div>
+        <div class="asesor-contact">
+          <div class="asesor-tel" id="asesorTel">—</div>
+          <div class="asesor-email" id="asesorEmail">—</div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <div class="section-label">Uso del elemento</div>
+      <div class="option-grid" id="usoGrid" style="grid-template-columns: repeat(auto-fill, minmax(150px,1fr))">
+        <div class="option-card selected" onclick="selectUso(this)" data-value="ventana">
+          <span class="option-icon">🪟</span>
+          <span class="option-label">Ventana</span>
+        </div>
+        <div class="option-card" onclick="selectUso(this)" data-value="balconera">
+          <span class="option-icon">🚶</span>
+          <span class="option-label">Balconera / Paso peatonal</span>
+        </div>
+        <div class="option-card" onclick="selectUso(this)" data-value="corredera">
+          <span class="option-icon">↔️</span>
+          <span class="option-label">Corredera</span>
+        </div>
+        <div class="option-card" onclick="selectUso(this)" data-value="muro_cortina">
+          <span class="option-icon">🏢</span>
+          <span class="option-label">Muro cortina / Fachada</span>
+        </div>
+        <div class="option-card" onclick="selectUso(this)" data-value="puerta">
+          <span class="option-icon">🚪</span>
+          <span class="option-label">Puerta de entrada</span>
+        </div>
+      </div>
+
+      <div class="nav-buttons">
+        <div></div>
+        <button class="btn btn-primary" onclick="goToStep(2)">Dimensiones →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       PASO 2 — DIMENSIONES Y TIPO DE APERTURA
+  ══════════════════════════════════════════ -->
+  <div class="step-screen" id="step2">
+    <div class="layout-with-sidebar">
+      <div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-icon">📐</div>
+            <div>
+              <div class="card-title">Dimensiones y apertura</div>
+              <div class="card-subtitle">Define la geometría del hueco y el tipo de apertura</div>
+            </div>
+          </div>
+
+          <div class="section-label">Medidas del hueco</div>
+          <div class="form-grid cols-3">
+            <div class="form-group">
+              <label>Anchura</label>
+              <div class="input-unit">
+                <input type="number" id="ancho" placeholder="1200" min="200" max="8000" oninput="updateSidebar()">
+                <span class="unit-label">mm</span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Altura</label>
+              <div class="input-unit">
+                <input type="number" id="alto" placeholder="1500" min="200" max="5000" oninput="updateSidebar()">
+                <span class="unit-label">mm</span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Módulos / Hojas</label>
+              <input type="number" id="modulos" placeholder="2" min="1" max="20">
+            </div>
+          </div>
+
+          <div class="divider"></div>
+          <div class="section-label">Tipo de apertura</div>
+          <div class="option-grid" id="aperturaGrid" style="grid-template-columns: repeat(auto-fill, minmax(140px,1fr))">
+            <!-- Se rellena dinámicamente según el uso elegido en paso 1 -->
+          </div>
+
+          <div class="nav-buttons">
+            <button class="btn btn-secondary" onclick="goToStep(1)">← Volver</button>
+            <button class="btn btn-primary" onclick="goToStep(3)">Prestaciones →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- SIDEBAR -->
+      <div class="sidebar-card">
+        <div class="sidebar-title">Resumen</div>
+        <div class="summary-row"><span class="summary-key">Proyecto</span><span class="summary-val" id="sb-nombre">—</span></div>
+        <div class="summary-row"><span class="summary-key">Tipología</span><span class="summary-val" id="sb-tipo">—</span></div>
+        <div class="summary-row"><span class="summary-key">Zona CTE</span><span class="summary-val" id="sb-zona">—</span></div>
+        <div class="summary-row"><span class="summary-key">Uso</span><span class="summary-val" id="sb-uso">—</span></div>
+        <div class="summary-row"><span class="summary-key">Apertura</span><span class="summary-val" id="sb-ap">—</span></div>
+        <div class="summary-row"><span class="summary-key">Hueco</span><span class="summary-val" id="sb-dim">—</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       PASO 3 — PRESTACIONES
+  ══════════════════════════════════════════ -->
+  <div class="step-screen" id="step3">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">🎯</div>
+        <div>
+          <div class="card-title">Prestaciones y estilo</div>
+          <div class="card-subtitle">Requisitos técnicos y concepto estético del proyecto</div>
+        </div>
+      </div>
+
+      <!-- TRANSMITANCIA -->
+      <div class="section-label">Aislamiento térmico</div>
+      <div class="perf-grid">
+        <div class="perf-item">
+          <div class="perf-header">
+            <span class="perf-name">Transmitancia Uw máxima</span>
+            <span class="perf-value" id="val-uw">≤ 1.8 W/m²K</span>
+          </div>
+          <input type="range" id="sl-uw" min="0.6" max="3.0" step="0.1" value="1.8"
+            oninput="updateRange('uw', this.value, '≤ ', ' W/m²K')">
+          <div class="info-note" style="margin-top:8px">CTE HE1: Zona A–B ≤ 3.1 · Zona C ≤ 2.3 · Zona D ≤ 1.8 · Zona E ≤ 1.5</div>
+        </div>
+        <div class="perf-item">
+          <div class="perf-header">
+            <span class="perf-name">Atenuación acústica Rw mínima</span>
+            <span class="perf-value" id="val-rw">≥ 33 dB</span>
+          </div>
+          <input type="range" id="sl-rw" min="25" max="55" step="1" value="33"
+            oninput="updateRange('rw', this.value, '≥ ', ' dB')">
+          <div class="info-note" style="margin-top:8px">DB-HR: zona tranquila ≥ 30 dB · urbano ≥ 33 dB · tráfico intenso ≥ 40 dB</div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <!-- ESTANQUEIDAD -->
+      <div class="section-label">Clasificación de estanqueidad</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Estanqueidad al agua (EN 12208)</label>
+          <select id="estanqAgua">
+            <option value="1A">Clase 1A — Uso básico / muy protegido</option>
+            <option value="2A">Clase 2A</option>
+            <option value="3A">Clase 3A</option>
+            <option value="4A" selected>Clase 4A — Residencial estándar</option>
+            <option value="5A">Clase 5A</option>
+            <option value="6A">Clase 6A</option>
+            <option value="7A">Clase 7A</option>
+            <option value="8A">Clase 8A — Máxima exposición</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Permeabilidad al aire (EN 12207)</label>
+          <select id="permAire">
+            <option value="1">Clase 1</option>
+            <option value="2">Clase 2</option>
+            <option value="3" selected>Clase 3 — Residencial estándar</option>
+            <option value="4">Clase 4 — Alta prestación</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Resistencia al viento (EN 12210)</label>
+          <select id="resViento">
+            <option value="A1">A1 — Zona poco expuesta</option>
+            <option value="A2">A2</option>
+            <option value="A3" selected>A3 — Estándar</option>
+            <option value="A4">A4</option>
+            <option value="A5">A5 — Gran altura / exposición</option>
+            <option value="C3">C3</option>
+            <option value="C5">C5 — Alta exposición</option>
+          </select>
+        </div>
+        <div class="form-group" style="justify-content:flex-end; padding-top:8px">
+          <!-- Espacio intencional para alineación -->
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <!-- REQUISITOS ADICIONALES -->
+      <div class="section-label">Requisitos adicionales</div>
+      <div class="chip-group" id="reqAdicionales">
+        <div class="chip" onclick="toggleChip(this)" data-value="rc2">Resistencia RC2</div>
+        <div class="chip" onclick="toggleChip(this)" data-value="rc3">Resistencia RC3</div>
+        <div class="chip" onclick="toggleChip(this)" data-value="passivhaus">Passivhaus</div>
+      </div>
+
+      <div class="divider"></div>
+      <!-- ESTILO -->
+      <div class="section-label">Concepto estético</div>
+      <div class="option-grid" id="estiloGrid" style="grid-template-columns: repeat(auto-fill, minmax(160px,1fr))">
+        <!-- Relleno dinámico según el uso -->
+      </div>
+
+      <div class="divider"></div>
+      <!-- ACABADO -->
+      <div class="section-label">Acabado de perfiles</div>
+      <div class="option-grid" id="acabadoGrid" style="grid-template-columns: repeat(auto-fill, minmax(110px,1fr))">
+        <div class="option-card" onclick="selectOption(this,'acabadoGrid')" data-value="anodizado_nat">
+          <span class="option-icon" style="font-size:20px">🔘</span>
+          <span class="option-label">Anodizado natural</span>
+        </div>
+        <div class="option-card" onclick="selectOption(this,'acabadoGrid')" data-value="anodizado_osc">
+          <span class="option-icon" style="font-size:20px">⚫</span>
+          <span class="option-label">Anodizado oscuro</span>
+        </div>
+        <div class="option-card selected" onclick="selectOption(this,'acabadoGrid')" data-value="lacado_blanco">
+          <span class="option-icon" style="font-size:20px">⚪</span>
+          <span class="option-label">Lacado blanco</span>
+        </div>
+        <div class="option-card" onclick="selectOption(this,'acabadoGrid')" data-value="lacado_negro">
+          <span class="option-icon" style="font-size:20px">🖤</span>
+          <span class="option-label">Lacado negro</span>
+        </div>
+        <div class="option-card" onclick="selectOption(this,'acabadoGrid')" data-value="lacado_color">
+          <span class="option-icon" style="font-size:20px">🎨</span>
+          <span class="option-label">Lacado a color RAL</span>
+        </div>
+        <div class="option-card" onclick="selectOption(this,'acabadoGrid')" data-value="madera">
+          <span class="option-icon" style="font-size:20px">🪵</span>
+          <span class="option-label">Veta madera</span>
+        </div>
+        <div class="option-card" onclick="selectOption(this,'acabadoGrid')" data-value="bicromia">
+          <span class="option-icon" style="font-size:20px">◑</span>
+          <span class="option-label">Bicromatismo</span>
+        </div>
+      </div>
+
+      <div class="nav-buttons">
+        <button class="btn btn-secondary" onclick="goToStep(2)">← Volver</button>
+        <button class="btn btn-primary" onclick="generateResult()">✦ Generar prescripción</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       PASO 4 — RESULTADO
+  ══════════════════════════════════════════ -->
+  <div class="step-screen" id="step4">
+
+    <div class="result-hero">
+      <div class="result-badge">✦ Prescripción CUSHO</div>
+      <div class="result-product-name" id="res-nombre">—</div>
+      <div class="result-series" id="res-sistema">—</div>
+
+      <div class="match-bar">
+        <span class="match-label">Compatibilidad con requisitos</span>
+        <div class="match-track"><div class="match-fill" id="match-fill" style="width:0%"></div></div>
+        <span class="match-pct" id="match-pct">—</span>
+      </div>
+
+      <div class="result-specs">
+        <div class="result-spec"><span class="spec-value" id="res-uw">—</span><span class="spec-key">Uw garantizado</span></div>
+        <div class="result-spec"><span class="spec-value" id="res-rw">—</span><span class="spec-key">Rw acústica</span></div>
+        <div class="result-spec"><span class="spec-value" id="res-clase">—</span><span class="spec-key">Permeab. aire</span></div>
+        <div class="result-spec"><span class="spec-value" id="res-agua">—</span><span class="spec-key">Estanq. agua</span></div>
+      </div>
+    </div>
+
+    <!-- DESCRIPCIÓN -->
+    <div class="card">
+      <div class="card-header" style="margin-bottom:16px">
+        <div class="card-icon">📋</div>
+        <div>
+          <div class="card-title">Texto de prescripción</div>
+          <div class="card-subtitle">Listo para incluir en memoria o pliego de condiciones técnicas</div>
+        </div>
+      </div>
+      <div class="highlight-box" id="res-descripcion"></div>
+    </div>
+
+    <!-- PRESTACIONES DETALLE -->
+    <div class="card">
+      <div class="card-header" style="margin-bottom:16px">
+        <div class="card-icon">📊</div>
+        <div>
+          <div class="card-title">Ficha de prestaciones</div>
+          <div class="card-subtitle">Valores certificados del sistema</div>
+        </div>
+      </div>
+      <table class="perf-table" id="res-tabla"></table>
+    </div>
+
+    <!-- DOCUMENTOS -->
+    <div class="card">
+      <div class="card-header" style="margin-bottom:8px">
+        <div class="card-icon">📁</div>
+        <div>
+          <div class="card-title">Documentación técnica</div>
+          <div class="card-subtitle">Archivos disponibles para el proyecto</div>
+        </div>
+      </div>
+      <div class="docs-grid" id="docs-grid"></div>
+
+      <div class="action-bar">
+        <button class="btn-download" onclick="downloadAll()">⬇️ Descargar pack completo</button>
+        <button class="btn-download" onclick="exportPrescription()" style="background:#222">📋 Exportar prescripción</button>
+        <button class="btn-restart" onclick="restartApp()">↺ Nueva consulta</button>
+      </div>
+    </div>
+
+  </div>
+
+</div><!-- /app-container -->
+
+<script>
+// ════════════════════════════════════════════════════════
+//  BASE DE DATOS — Zonas CP y asesores
+// ════════════════════════════════════════════════════════
+const ZONAS_CP = {
+  // Prefijo 2 dígitos → zona CTE
+  "28": { zona: "D", ciudad: "Madrid" },
+  "08": { zona: "C", ciudad: "Barcelona" },
+  "41": { zona: "B", ciudad: "Sevilla" },
+  "46": { zona: "B", ciudad: "Valencia" },
+  "29": { zona: "A", ciudad: "Málaga" },
+  "50": { zona: "D", ciudad: "Zaragoza" },
+  "48": { zona: "C", ciudad: "Bilbao" },
+  "15": { zona: "C", ciudad: "A Coruña" },
+  "35": { zona: "A", ciudad: "Las Palmas" },
+  "07": { zona: "B", ciudad: "Palma" },
+  "09": { zona: "E", ciudad: "Burgos" },
+  "05": { zona: "E", ciudad: "Ávila" },
+  "47": { zona: "D", ciudad: "Valladolid" },
+  "18": { zona: "C", ciudad: "Granada" },
+  "14": { zona: "B", ciudad: "Córdoba" },
+  "30": { zona: "B", ciudad: "Murcia" },
+  "03": { zona: "B", ciudad: "Alicante" },
+  "20": { zona: "C", ciudad: "San Sebastián" },
+  "33": { zona: "C", ciudad: "Oviedo" },
+  "39": { zona: "C", ciudad: "Santander" }
+};
+
+// ════════════════════════════════════════════════════════
+//  BASE DE DATOS — Asesores por zona
+//  ► PERSONALIZA: añade los nombres y datos reales de tu equipo
+// ════════════════════════════════════════════════════════
+const ASESORES = {
+  "A": { nombre: "Carlos Ruiz", zona: "Zona Sur — Andalucía Costera", tel: "+34 611 000 001", email: "c.ruiz@cusho.com" },
+  "B": { nombre: "Laura Gómez", zona: "Zona Levante y Sur Interior", tel: "+34 611 000 002", email: "l.gomez@cusho.com" },
+  "C": { nombre: "Marc Puigdomènech", zona: "Zona Mediterránea y Norte", tel: "+34 611 000 003", email: "m.puig@cusho.com" },
+  "D": { nombre: "Isabel Martínez", zona: "Zona Centro", tel: "+34 611 000 004", email: "i.martinez@cusho.com" },
+  "E": { nombre: "Javier Aldecoa", zona: "Zona Norte Interior y Meseta", tel: "+34 611 000 005", email: "j.aldecoa@cusho.com" }
+};
+
+// ════════════════════════════════════════════════════════
+//  BASE DE DATOS — Sistemas CUSHO
+//  ► PERSONALIZA: añade o modifica sistemas con los datos reales
+// ════════════════════════════════════════════════════════
+const SISTEMAS = [
+  {
+    id: "cusho_45",
+    nombre: "CUSHO 45",
+    descripcionCorta: "Sistema batiente/oscilobatiente sin RPT",
+    usos: ["ventana", "balconera"],
+    aperturas: ["batiente", "oscilobatiente", "fijo"],
+    estilos: ["estandar"],
+    uw_max: 2.8,
+    rw_min: 28,
+    agua_clase: 3,
+    aire_clase: 3,
+    viento_clase: "A2",
+    rpt: false,
+    passivhaus: false,
+    rc2: false, rc3: false,
+    profundidad: 45,
+    descripcion: `Carpintería de aluminio extruido sin rotura de puente térmico <strong>CUSHO 45</strong>. Sistema batiente y oscilobatiente con perfil de 45 mm de profundidad. Transmitancia Uf ≤ 2.8 W/m²K. Clasificación EN 12207/12208/12210: permeabilidad Clase 3, estanqueidad Clase 3A, resistencia al viento Clase A2. Acristalamiento doble laminar 4+4/16/4+4 con control solar y bajo emisivo, Ug ≤ 1.1 W/m²K. Herraje perimetral de aluminio con juntas de estanqueidad EPDM. Acabado lacado o anodizado según especificación.`,
+    prestaciones: [
+      ["Profundidad de marco", "45 mm"],
+      ["Transmitancia marco Uf", "≤ 2.8 W/m²K"],
+      ["Transmitancia conjunto Uw", "≤ 2.6 W/m²K"],
+      ["Atenuación acústica Rw", "28 dB"],
+      ["Permeabilidad al aire", "Clase 3 (EN 12207)"],
+      ["Estanqueidad al agua", "Clase 3A (EN 12208)"],
+      ["Resistencia al viento", "Clase A2 (EN 12210)"],
+      ["RPT", "No"],
+      ["Vidrio estándar", "4+4/16/4+4 bajo emisivo + control solar"],
+    ],
+    barras: [40, 35, 40],
+    docs: ["ficha", "detalles_cad", "bim", "dop", "marcadoCE"]
+  },
+  {
+    id: "cusho_70_rpt",
+    nombre: "CUSHO 70 RPT",
+    descripcionCorta: "Sistema batiente/oscilobatiente con RPT 25 mm",
+    usos: ["ventana", "balconera"],
+    aperturas: ["batiente", "oscilobatiente", "fijo"],
+    estilos: ["estandar", "hoja_oculta"],
+    uw_max: 1.6,
+    rw_min: 36,
+    agua_clase: 5,
+    aire_clase: 4,
+    viento_clase: "A3",
+    rpt: true,
+    passivhaus: false,
+    rc2: true, rc3: false,
+    profundidad: 70,
+    descripcion: `Ventanas y balconeras de aluminio extruido con <strong>Rotura de Puente Térmico (RPT) de poliamida ≥ 25 mm</strong>, serie CUSHO 70 RPT. Marco de 70 mm de profundidad. Transmitancia Uf ≤ 1.5 W/m²K. Acristalamiento doble laminar 4+4/16Ar/4+4 bajo emisivo con control solar, Ug ≤ 1.0 W/m²K. Clasificación EN 12207/12208/12210: permeabilidad Clase 4, estanqueidad Clase 5A, resistencia al viento Clase A3. Atenuación acústica Rw ≥ 36 dB. Herraje perimetral multicíerre de acero inoxidable. Certificado RC2 opcional. Acabado lacado Qualicoat o anodizado Qualanod.`,
+    prestaciones: [
+      ["Profundidad de marco", "70 mm"],
+      ["RPT poliamida", "≥ 25 mm"],
+      ["Transmitancia marco Uf", "≤ 1.5 W/m²K"],
+      ["Transmitancia conjunto Uw", "≤ 1.6 W/m²K"],
+      ["Atenuación acústica Rw", "36 dB"],
+      ["Permeabilidad al aire", "Clase 4 (EN 12207)"],
+      ["Estanqueidad al agua", "Clase 5A (EN 12208)"],
+      ["Resistencia al viento", "Clase A3 (EN 12210)"],
+      ["Resistencia al robo", "RC2 opcional"],
+      ["Vidrio estándar", "4+4/16Ar/4+4 bajo emisivo + control solar"],
+    ],
+    barras: [72, 70, 75],
+    docs: ["ficha", "detalles_cad", "bim", "dop", "marcadoCE", "pliego"]
+  },
+  {
+    id: "cusho_85_phz",
+    nombre: "CUSHO 85 Passivhaus",
+    descripcionCorta: "Sistema batiente/oscilobatiente certificado Passivhaus",
+    usos: ["ventana", "balconera"],
+    aperturas: ["batiente", "oscilobatiente", "fijo"],
+    estilos: ["estandar", "hoja_oculta", "minimalista"],
+    uw_max: 0.8,
+    rw_min: 40,
+    agua_clase: 8,
+    aire_clase: 4,
+    viento_clase: "A5",
+    rpt: true,
+    passivhaus: true,
+    rc2: true, rc3: true,
+    profundidad: 85,
+    descripcion: `Carpintería de aluminio extruido <strong>CUSHO 85 Passivhaus</strong> con certificación Instituto Passivhaus. RPT de poliamida ≥ 34 mm. Triple acristalamiento laminar 4+4/18Ar/4/18Ar/4+4 bajo emisivo, Ug ≤ 0.5 W/m²K. Transmitancia Uf ≤ 0.75 W/m²K. Junta cuádruple de estanqueidad EPDM. Clasificación: permeabilidad Clase 4, estanqueidad Clase 8A, viento Clase A5. Rw ≥ 40 dB. Cumple certificación RC3. Disponible con vidrio en hoja oculta y concepto minimalista panorámico.`,
+    prestaciones: [
+      ["Profundidad de marco", "85 mm"],
+      ["RPT poliamida", "≥ 34 mm"],
+      ["Transmitancia marco Uf", "≤ 0.75 W/m²K"],
+      ["Transmitancia conjunto Uw", "≤ 0.8 W/m²K"],
+      ["Atenuación acústica Rw", "40 dB"],
+      ["Permeabilidad al aire", "Clase 4 (EN 12207)"],
+      ["Estanqueidad al agua", "Clase 8A (EN 12208)"],
+      ["Resistencia al viento", "Clase A5 (EN 12210)"],
+      ["Resistencia al robo", "RC2 / RC3"],
+      ["Passivhaus", "Certificado PHI"],
+      ["Vidrio estándar", "Triple laminar bajo emisivo + argón"],
+    ],
+    barras: [95, 88, 92],
+    docs: ["ficha", "detalles_cad", "bim", "dop", "marcadoCE", "pliego", "cert_passivhaus"]
+  },
+  {
+    id: "cusho_slide_160",
+    nombre: "CUSHO Slide 160",
+    descripcionCorta: "Sistema corredera estándar de altas prestaciones",
+    usos: ["corredera"],
+    aperturas: ["corredera"],
+    estilos: ["estandar"],
+    uw_max: 1.8,
+    rw_min: 33,
+    agua_clase: 4,
+    aire_clase: 3,
+    viento_clase: "A3",
+    rpt: true,
+    passivhaus: false,
+    rc2: false, rc3: false,
+    profundidad: 160,
+    descripcion: `Sistema <strong>corredera de aluminio CUSHO Slide 160</strong> de dos o más hojas. Perfil de 160 mm de profundidad con RPT 20 mm. Marco bajo de 20 mm para accesibilidad PMR. Guía inferior de acero inoxidable. Rodamiento sobre ruedas de acero. Acristalamiento doble laminar 4+4/16Ar/4+4 bajo emisivo + control solar. Uw ≤ 1.8 W/m²K. Clasificación: Clase 3 aire, Clase 4A agua, Clase A3 viento. Rw ≥ 33 dB.`,
+    prestaciones: [
+      ["Profundidad de perfil", "160 mm"],
+      ["Marco bajo", "20 mm (apto PMR)"],
+      ["RPT", "20 mm"],
+      ["Transmitancia Uw", "≤ 1.8 W/m²K"],
+      ["Atenuación acústica Rw", "33 dB"],
+      ["Permeabilidad al aire", "Clase 3 (EN 12207)"],
+      ["Estanqueidad al agua", "Clase 4A (EN 12208)"],
+      ["Resistencia al viento", "Clase A3 (EN 12210)"],
+      ["Vidrio estándar", "4+4/16Ar/4+4 bajo emisivo + control solar"],
+    ],
+    barras: [65, 60, 65],
+    docs: ["ficha", "detalles_cad", "bim", "dop", "marcadoCE", "pliego"]
+  },
+  {
+    id: "cusho_lift_200",
+    nombre: "CUSHO Lift & Slide 200",
+    descripcionCorta: "Corredera elevable — umbral zero / pavimento continuo",
+    usos: ["corredera"],
+    aperturas: ["elevable"],
+    estilos: ["estandar", "pavimento_continuo", "umbral_zero"],
+    uw_max: 1.3,
+    rw_min: 40,
+    agua_clase: 6,
+    aire_clase: 4,
+    viento_clase: "A5",
+    rpt: true,
+    passivhaus: false,
+    rc2: true, rc3: false,
+    profundidad: 200,
+    descripcion: `Sistema <strong>corredera elevable CUSHO Lift & Slide 200</strong>. Mecanismo elevador sobre raíl de acero inoxidable con presión perimetral en posición cerrada. Perfil de 200 mm con RPT ≥ 34 mm. Marco bajo de perfil reducido, disponible con umbral zero a ras de pavimento. Hojas de hasta 400 kg, dimensiones máximas 3200 × 3000 mm. Uw ≤ 1.3 W/m²K, Rw ≥ 40 dB. Clasificación: Clase 4 aire, Clase 6A agua, Clase A5 viento. Acristalamiento doble laminar 4+4/24Ar/4+4 bajo emisivo + control solar.`,
+    prestaciones: [
+      ["Profundidad de perfil", "200 mm"],
+      ["RPT", "≥ 34 mm"],
+      ["Transmitancia Uw", "≤ 1.3 W/m²K"],
+      ["Atenuación acústica Rw", "40 dB"],
+      ["Permeabilidad al aire", "Clase 4 (EN 12207)"],
+      ["Estanqueidad al agua", "Clase 6A (EN 12208)"],
+      ["Resistencia al viento", "Clase A5 (EN 12210)"],
+      ["Peso máx. por hoja", "400 kg"],
+      ["Umbral", "Zero / ras de pavimento"],
+      ["Vidrio estándar", "4+4/24Ar/4+4 bajo emisivo + control solar"],
+    ],
+    barras: [85, 80, 85],
+    docs: ["ficha", "detalles_cad", "bim", "dop", "marcadoCE", "pliego"]
+  },
+  {
+    id: "cusho_fold_80",
+    nombre: "CUSHO Fold 80",
+    descripcionCorta: "Sistema plegable / acordeón",
+    usos: ["corredera"],
+    aperturas: ["replegable"],
+    estilos: ["estandar", "perfil_cruce"],
+    uw_max: 1.6,
+    rw_min: 34,
+    agua_clase: 4,
+    aire_clase: 3,
+    viento_clase: "A3",
+    rpt: true,
+    passivhaus: false,
+    rc2: false, rc3: false,
+    profundidad: 80,
+    descripcion: `Sistema <strong>plegable-acordeón CUSHO Fold 80</strong>. Perfil de 80 mm de profundidad con RPT. Apertura total del hueco plegando hojas hacia uno o ambos lados, hasta 10 hojas por conjunto. Guía superior de aluminio extruido; guía inferior opcional para solución con suelo libre. Uw ≤ 1.6 W/m²K, Rw ≥ 34 dB. Clasificación: Clase 3 aire, Clase 4A agua, Clase A3 viento. Acristalamiento doble laminar 4+4/16Ar/4+4 bajo emisivo.`,
+    prestaciones: [
+      ["Profundidad de perfil", "80 mm"],
+      ["RPT", "Sí"],
+      ["Transmitancia Uw", "≤ 1.6 W/m²K"],
+      ["Atenuación acústica Rw", "34 dB"],
+      ["Hojas máximo por conjunto", "10"],
+      ["Permeabilidad al aire", "Clase 3 (EN 12207)"],
+      ["Estanqueidad al agua", "Clase 4A (EN 12208)"],
+      ["Resistencia al viento", "Clase A3 (EN 12210)"],
+      ["Vidrio estándar", "4+4/16Ar/4+4 bajo emisivo + control solar"],
+    ],
+    barras: [68, 63, 65],
+    docs: ["ficha", "detalles_cad", "bim", "dop", "marcadoCE"]
+  },
+  {
+    id: "cusho_mc65",
+    nombre: "CUSHO MC 65",
+    descripcionCorta: "Muro cortina con presión oculta",
+    usos: ["muro_cortina"],
+    aperturas: ["fijo", "batiente", "oscilobatiente"],
+    estilos: ["estandar", "minimalista"],
+    uw_max: 0.9,
+    rw_min: 42,
+    agua_clase: 7,
+    aire_clase: 4,
+    viento_clase: "C5",
+    rpt: true,
+    passivhaus: false,
+    rc2: false, rc3: false,
+    profundidad: 65,
+    descripcion: `<strong>Muro cortina CUSHO MC 65</strong> de aluminio extruido con sistema de presión oculta. Módulo de fachada continua con acristalamiento exterior. Montantes y travesaños 6063-T5 con RPT integrada. Módulo de ancho variable 600–2400 mm. Uw ≤ 0.9 W/m²K con vidrio triple bajo emisivo. Clasificación EN 13119. Rw ≥ 42 dB. Clase 4 aire, Clase 7A agua, Clase C5 viento. Disponible en versión cap visible, semioculta y totalmente oculta (structural glazing).`,
+    prestaciones: [
+      ["Norma aplicable", "EN 13119"],
+      ["Profundidad de montante", "65 mm"],
+      ["RPT integrada", "Sí"],
+      ["Transmitancia Uw", "≤ 0.9 W/m²K"],
+      ["Atenuación acústica Rw", "42 dB"],
+      ["Permeabilidad al aire", "Clase 4 (EN 12207)"],
+      ["Estanqueidad al agua", "Clase 7A (EN 12208)"],
+      ["Resistencia al viento", "Clase C5 (EN 12210)"],
+      ["Módulo máximo", "2400 × 4500 mm"],
+      ["Vidrio estándar", "Triple bajo emisivo + argón"],
+    ],
+    barras: [92, 88, 90],
+    docs: ["ficha", "detalles_cad", "bim", "dop", "marcadoCE", "pliego", "informe_viento"]
+  },
+  {
+    id: "cusho_door_70",
+    nombre: "CUSHO Door 70",
+    descripcionCorta: "Puerta de entrada batiente con RPT",
+    usos: ["puerta"],
+    aperturas: ["batiente"],
+    estilos: ["estandar", "minimalista"],
+    uw_max: 1.6,
+    rw_min: 36,
+    agua_clase: 5,
+    aire_clase: 4,
+    viento_clase: "A3",
+    rpt: true,
+    passivhaus: false,
+    rc2: true, rc3: true,
+    profundidad: 70,
+    descripcion: `Puerta de entrada de aluminio extruido <strong>CUSHO Door 70</strong> con RPT ≥ 25 mm. Marco de 70 mm de profundidad. Hoja de hasta 120 kg y dimensiones máximas 1200 × 2700 mm. Herraje perimetral anticíerre con bisagras de acero inoxidable. Uw ≤ 1.6 W/m²K. Rw ≥ 36 dB. Clasificación: Clase 4 aire, Clase 5A agua, Clase A3 viento. Cumple RC2 y RC3 según EN 1627. Cerradura multipunto certificada. Acristalamiento doble laminar 4+4/16Ar/4+4.`,
+    prestaciones: [
+      ["Profundidad de marco", "70 mm"],
+      ["RPT", "≥ 25 mm"],
+      ["Transmitancia Uw", "≤ 1.6 W/m²K"],
+      ["Atenuación acústica Rw", "36 dB"],
+      ["Permeabilidad al aire", "Clase 4 (EN 12207)"],
+      ["Estanqueidad al agua", "Clase 5A (EN 12208)"],
+      ["Resistencia al viento", "Clase A3 (EN 12210)"],
+      ["Resistencia al robo", "RC2 / RC3 (EN 1627)"],
+      ["Peso máx. hoja", "120 kg"],
+      ["Vidrio estándar", "4+4/16Ar/4+4 bajo emisivo"],
+    ],
+    barras: [72, 68, 75],
+    docs: ["ficha", "detalles_cad", "bim", "dop", "marcadoCE", "cert_rc"]
+  }
+];
+
+// ════════════════════════════════════════════════════════
+//  BASE DE DATOS — Documentos
+//  ► PERSONALIZA: cambia las rutas de archivo por las reales
+// ════════════════════════════════════════════════════════
+const DOCS_META = {
+  ficha:            { label: "Ficha técnica",          tipo: "PDF",      icono: "📄", clase: "pdf", size: "1.2 MB", ruta: "docs/{id}/ficha_tecnica.pdf" },
+  detalles_cad:     { label: "Detalles CAD/BIM",       tipo: "DWG·PDF",  icono: "📐", clase: "dwg", size: "3.8 MB", ruta: "docs/{id}/detalles_constructivos.dwg" },
+  bim:              { label: "Objeto BIM Revit",        tipo: "RFA·IFC",  icono: "🧩", clase: "bim", size: "5.1 MB", ruta: "docs/{id}/objeto_bim.rfa" },
+  dop:              { label: "Declaración DoP",         tipo: "PDF",      icono: "🏷️", clase: "pdf", size: "0.4 MB", ruta: "docs/{id}/declaracion_prestaciones.pdf" },
+  marcadoCE:        { label: "Marcado CE",              tipo: "PDF",      icono: "🏅", clase: "pdf", size: "0.3 MB", ruta: "docs/{id}/marcado_CE.pdf" },
+  pliego:           { label: "Pliego de condiciones",   tipo: "DOCX",     icono: "📝", clase: "doc", size: "0.9 MB", ruta: "docs/{id}/pliego_condiciones.docx" },
+  cert_passivhaus:  { label: "Cert. Passivhaus",        tipo: "PDF",      icono: "🌿", clase: "pdf", size: "0.6 MB", ruta: "docs/{id}/certificado_passivhaus.pdf" },
+  cert_rc:          { label: "Cert. Antiintrusión",     tipo: "PDF",      icono: "🔒", clase: "pdf", size: "0.5 MB", ruta: "docs/{id}/certificado_RC.pdf" },
+  informe_viento:   { label: "Informe carga de viento", tipo: "PDF",      icono: "💨", clase: "pdf", size: "1.1 MB", ruta: "docs/{id}/informe_viento.pdf" }
+};
+
+// ════════════════════════════════════════════════════════
+//  OPCIONES DE APERTURA POR USO
+// ════════════════════════════════════════════════════════
+const APERTURAS_POR_USO = {
+  ventana:     [{ v: "batiente", icon: "🔓", label: "Batiente" }, { v: "oscilobatiente", icon: "↙️", label: "Oscilobatiente" }, { v: "fijo", icon: "⬛", label: "Fijo" }],
+  balconera:   [{ v: "batiente", icon: "🔓", label: "Batiente" }, { v: "oscilobatiente", icon: "↙️", label: "Oscilobatiente" }],
+  corredera:   [{ v: "corredera", icon: "↔️", label: "Corredera" }, { v: "elevable", icon: "⬆️", label: "Elevable" }, { v: "replegable", icon: "🪗", label: "Replegable" }],
+  muro_cortina:[{ v: "fijo", icon: "⬛", label: "Fijo" }, { v: "batiente", icon: "🔓", label: "Con hojas batientes" }, { v: "oscilobatiente", icon: "↙️", label: "Con hojas OB" }],
+  puerta:      [{ v: "batiente", icon: "🚪", label: "Batiente" }]
+};
+
+// ════════════════════════════════════════════════════════
+//  ESTILOS POR USO
+// ════════════════════════════════════════════════════════
+const ESTILOS_POR_USO = {
+  ventana:     [{ v: "estandar", icon: "🔲", label: "Estándar" }, { v: "minimalista", icon: "⬜", label: "Minimalista / Panorámico" }, { v: "hoja_oculta", icon: "👁️", label: "Hoja oculta" }],
+  balconera:   [{ v: "estandar", icon: "🔲", label: "Estándar" }, { v: "minimalista", icon: "⬜", label: "Minimalista / Panorámico" }, { v: "hoja_oculta", icon: "👁️", label: "Hoja oculta" }],
+  corredera:   [{ v: "estandar", icon: "🔲", label: "Estándar" }, { v: "pavimento_continuo", icon: "⬇️", label: "Pavimento continuo" }, { v: "perfil_cruce", icon: "⏸️", label: "Perfil de cruce estrecho" }, { v: "umbral_zero", icon: "◻️", label: "Umbral ZERO" }],
+  muro_cortina:[{ v: "estandar", icon: "🔲", label: "Estándar" }, { v: "minimalista", icon: "⬜", label: "Minimalista" }],
+  puerta:      [{ v: "estandar", icon: "🔲", label: "Estándar" }, { v: "minimalista", icon: "⬜", label: "Minimalista" }]
+};
+
+// ════════════════════════════════════════════════════════
+//  ESTADO DE LA APLICACIÓN
+// ════════════════════════════════════════════════════════
+const state = {
+  nombre: '', tipologia: '', cp: '', zonaCP: null, ciudad: '',
+  uso: 'ventana', apertura: null, estilo: null,
+  ancho: null, alto: null, modulos: null,
+  uw: 1.8, rw: 33,
+  agua: '4A', aire: '3', viento: 'A3',
+  rc2: false, rc3: false, passivhaus: false,
+  acabado: 'lacado_blanco',
+  sistemaSeleccionado: null
+};
+
+// ════════════════════════════════════════════════════════
+//  NAVEGACIÓN Y PROGRESO
+// ════════════════════════════════════════════════════════
+function goToStep(n) {
+  collectData();
+  document.querySelectorAll('.step-screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('step' + n).classList.add('active');
+  updateProgress(n);
+
+  if (n === 2) renderAperturas();
+  if (n === 3) renderEstilos();
+  updateSidebar();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function updateProgress(current) {
+  for (let i = 1; i <= 4; i++) {
+    const circle = document.getElementById('sc' + i);
+    const label  = document.getElementById('slb' + i);
+    const line   = document.getElementById('sl' + i);
+    circle.classList.remove('active','done');
+    label.classList.remove('active','done');
+    if (line) line.classList.remove('done');
+    if (i < current) { circle.classList.add('done'); label.classList.add('done'); if (line) line.classList.add('done'); }
+    else if (i === current) { circle.classList.add('active'); label.classList.add('active'); }
+  }
+}
+
+// ════════════════════════════════════════════════════════
+//  CÓDIGO POSTAL → ZONA CTE + ASESOR
+// ════════════════════════════════════════════════════════
+function handleCP(val) {
+  const zonaEl   = document.getElementById('zonaResultado');
+  const asesorEl = document.getElementById('asesorCard');
+
+  if (val.length < 5) { zonaEl.innerHTML = ''; asesorEl.classList.add('hidden'); state.zonaCP = null; return; }
+
+  const prefijo = val.substring(0, 2);
+  const info    = ZONAS_CP[prefijo];
+
+  if (info) {
+    state.zonaCP = info.zona;
+    state.ciudad = info.ciudad;
+    zonaEl.innerHTML = `<div class="zona-badge">📍 ${info.ciudad} — Zona CTE ${info.zona}</div>`;
+
+    const asesor = ASESORES[info.zona];
+    if (asesor) {
+      document.getElementById('asesorNombre').textContent = asesor.nombre;
+      document.getElementById('asesorZona').textContent   = asesor.zona;
+      document.getElementById('asesorTel').textContent    = asesor.tel;
+      document.getElementById('asesorEmail').textContent  = asesor.email;
+      asesorEl.classList.remove('hidden');
+    }
+  } else {
+    state.zonaCP = null;
+    zonaEl.innerHTML = `<div class="zona-badge" style="background:#FFF3E0;border-color:rgba(255,152,0,0.3);color:#E65100">⚠️ CP no encontrado — introduce manualmente la zona</div>`;
+    asesorEl.classList.add('hidden');
+  }
+}
+
+// ════════════════════════════════════════════════════════
+//  RENDER DINÁMICO DE GRIDS
+// ════════════════════════════════════════════════════════
+function renderAperturas() {
+  const grid = document.getElementById('aperturaGrid');
+  const ops  = APERTURAS_POR_USO[state.uso] || [];
+  grid.innerHTML = ops.map((o, i) =>
+    `<div class="option-card ${i===0?'selected':''}" onclick="selectOption(this,'aperturaGrid')" data-value="${o.v}">
+      <span class="option-icon">${o.icon}</span>
+      <span class="option-label">${o.label}</span>
+    </div>`
+  ).join('');
+  if (ops.length > 0) state.apertura = ops[0].v;
+}
+
+function renderEstilos() {
+  const grid = document.getElementById('estiloGrid');
+  const ops  = ESTILOS_POR_USO[state.uso] || [];
+  grid.innerHTML = ops.map((o, i) =>
+    `<div class="option-card ${i===0?'selected':''}" onclick="selectOption(this,'estiloGrid')" data-value="${o.v}">
+      <span class="option-icon">${o.icon}</span>
+      <span class="option-label">${o.label}</span>
+    </div>`
+  ).join('');
+  if (ops.length > 0) state.estilo = ops[0].v;
+}
+
+// ════════════════════════════════════════════════════════
+//  SELECCIÓN DE USO (paso 1)
+// ════════════════════════════════════════════════════════
+function selectUso(el) {
+  document.querySelectorAll('#usoGrid .option-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  state.uso = el.dataset.value;
+}
+
+// ════════════════════════════════════════════════════════
+//  OPCIÓN GENÉRICA
+// ════════════════════════════════════════════════════════
+function selectOption(el, gridId) {
+  document.querySelectorAll('#' + gridId + ' .option-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function toggleChip(el) { el.classList.toggle('selected'); }
+
+function updateRange(id, value, prefix, suffix) {
+  document.getElementById('val-' + id).textContent = prefix + parseFloat(value).toFixed(id === 'uw' ? 1 : 0) + suffix;
+  if (id === 'uw') state.uw = parseFloat(value);
+  if (id === 'rw') state.rw = parseInt(value);
+}
+
+// ════════════════════════════════════════════════════════
+//  RECOGIDA DE DATOS
+// ════════════════════════════════════════════════════════
+function collectData() {
+  state.nombre    = document.getElementById('proyectoNombre')?.value || '';
+  state.tipologia = document.getElementById('tipologia')?.value || '';
+  state.cp        = document.getElementById('codigoPostal')?.value || '';
+
+  const apSel = document.querySelector('#aperturaGrid .option-card.selected');
+  if (apSel) state.apertura = apSel.dataset.value;
+
+  const estSel = document.querySelector('#estiloGrid .option-card.selected');
+  if (estSel) state.estilo = estSel.dataset.value;
+
+  const acaSel = document.querySelector('#acabadoGrid .option-card.selected');
+  if (acaSel) state.acabado = acaSel.dataset.value;
+
+  const anchoEl = document.getElementById('ancho');
+  if (anchoEl?.value) state.ancho = parseInt(anchoEl.value);
+  const altoEl = document.getElementById('alto');
+  if (altoEl?.value) state.alto = parseInt(altoEl.value);
+  const modEl = document.getElementById('modulos');
+  if (modEl?.value) state.modulos = parseInt(modEl.value);
+
+  state.agua  = document.getElementById('estanqAgua')?.value || '4A';
+  state.aire  = document.getElementById('permAire')?.value || '3';
+  state.viento= document.getElementById('resViento')?.value || 'A3';
+
+  state.rc2        = !!document.querySelector('#reqAdicionales [data-value="rc2"].selected');
+  state.rc3        = !!document.querySelector('#reqAdicionales [data-value="rc3"].selected');
+  state.passivhaus = !!document.querySelector('#reqAdicionales [data-value="passivhaus"].selected');
+}
+
+// ════════════════════════════════════════════════════════
+//  SIDEBAR
+// ════════════════════════════════════════════════════════
+const USO_LABELS = { ventana: 'Ventana', balconera: 'Balconera', corredera: 'Corredera', muro_cortina: 'Muro cortina', puerta: 'Puerta entrada' };
+const TIPO_LABELS = { unifamiliar: 'Unifamiliar', plurifamiliar: 'Plurifamiliar', oficinas: 'Oficinas', hotelero: 'Hotelero', comercial: 'Comercial', sanitario: 'Sanitario/Educ.', industrial: 'Industrial', rehabilitacion: 'Rehabilitación' };
+
+function updateSidebar() {
+  setText('sb-nombre', state.nombre || '—');
+  setText('sb-tipo',   TIPO_LABELS[state.tipologia] || '—');
+  setText('sb-zona',   state.zonaCP ? `Zona ${state.zonaCP} — ${state.ciudad}` : '—');
+  setText('sb-uso',    USO_LABELS[state.uso] || '—');
+  setText('sb-ap',     state.apertura || '—');
+  setText('sb-dim',    (state.ancho && state.alto) ? `${state.ancho} × ${state.alto} mm` : '—');
+}
+
+function setText(id, val) { const el = document.getElementById(id); if (el) el.textContent = val; }
+
+// ════════════════════════════════════════════════════════
+//  MOTOR DE SELECCIÓN DE SISTEMA
+// ════════════════════════════════════════════════════════
+function matchScore(sistema) {
+  let score = 0;
+  let total = 0;
+
+  // Uso (obligatorio)
+  if (!sistema.usos.includes(state.uso)) return -1;
+
+  // Apertura (obligatorio)
+  if (state.apertura && !sistema.aperturas.includes(state.apertura)) return -1;
+
+  // Prestaciones térmicas
+  total += 30;
+  if (sistema.uw_max <= state.uw) score += 30;
+  else if (sistema.uw_max <= state.uw + 0.3) score += 15;
+
+  // Prestaciones acústicas
+  total += 25;
+  if (sistema.rw_min >= state.rw) score += 25;
+  else if (sistema.rw_min >= state.rw - 3) score += 12;
+
+  // Estanqueidad agua
+  total += 15;
+  const aguaReq = parseInt(state.agua);
+  if (sistema.agua_clase >= aguaReq) score += 15;
+  else if (sistema.agua_clase >= aguaReq - 1) score += 7;
+
+  // Permeabilidad aire
+  total += 10;
+  if (sistema.aire_clase >= parseInt(state.aire)) score += 10;
+
+  // Requisitos adicionales
+  if (state.passivhaus) { total += 20; if (sistema.passivhaus) score += 20; }
+  if (state.rc2) { total += 10; if (sistema.rc2) score += 10; }
+  if (state.rc3) { total += 10; if (sistema.rc3) score += 10; }
+
+  // Estilo
+  total += 10;
+  if (state.estilo && sistema.estilos.includes(state.estilo)) score += 10;
+
+  return total > 0 ? Math.round((score / total) * 100) : 0;
+}
+
+function selectBestSystem() {
+  let best = null;
+  let bestScore = -1;
+
+  SISTEMAS.forEach(s => {
+    const score = matchScore(s);
+    if (score > bestScore) { bestScore = score; best = s; }
+  });
+
+  return { sistema: best, score: bestScore };
+}
+
+// ════════════════════════════════════════════════════════
+//  GENERAR RESULTADO
+// ════════════════════════════════════════════════════════
+function generateResult() {
+  collectData();
+
+  const { sistema, score } = selectBestSystem();
+
+  if (!sistema) {
+    alert('No se encontró ningún sistema compatible. Por favor revisa los requisitos o contacta con tu asesor CUSHO.');
+    return;
+  }
+
+  state.sistemaSeleccionado = sistema;
+
+  // HERO
+  setText('res-nombre',  sistema.nombre);
+  setText('res-sistema', sistema.descripcionCorta);
+  setText('res-uw',      `≤ ${sistema.uw_max} W/m²K`);
+  setText('res-rw',      `≥ ${sistema.rw_min} dB`);
+  setText('res-clase',   `Clase ${sistema.aire_clase}`);
+  setText('res-agua',    `Clase ${sistema.agua_clase}A`);
+  setText('match-pct',   `${score}%`);
+
+  // Match bar animada
+  setTimeout(() => {
+    document.getElementById('match-fill').style.width = score + '%';
+  }, 300);
+
+  // Descripción
+  document.getElementById('res-descripcion').innerHTML = sistema.descripcion;
+
+  // Tabla de prestaciones
+  const tabla = document.getElementById('res-tabla');
+  tabla.innerHTML = sistema.prestaciones.map((row, i) => `
+    <tr><td>${row[0]}</td><td>${row[1]}</td></tr>
+    ${i < 3 ? `<tr class="perf-bar-row"><td colspan="2"><div class="perf-bar-bg"><div class="perf-bar-fill" style="width:0%" data-target="${sistema.barras[i] || 70}%"></div></div></td></tr>` : ''}
+  `).join('');
+
+  setTimeout(() => {
+    document.querySelectorAll('.perf-bar-fill').forEach(b => {
+      b.style.width = b.dataset.target || '70%';
+    });
+  }, 400);
+
+  // Documentos
+  const docsGrid = document.getElementById('docs-grid');
+  docsGrid.innerHTML = sistema.docs.map(docId => {
+    const meta = DOCS_META[docId];
+    if (!meta) return '';
+    return `<div class="doc-card" onclick="downloadDoc('${docId}', '${sistema.id}')">
+      <div class="doc-icon ${meta.clase}">${meta.icono}</div>
+      <div class="doc-name">${meta.label}</div>
+      <div class="doc-type">${meta.tipo}</div>
+    </div>`;
+  }).join('');
+
+  goToStep(4);
+}
+
+// ════════════════════════════════════════════════════════
+//  DESCARGA DE DOCUMENTOS
+// ════════════════════════════════════════════════════════
+function downloadDoc(docId, sistemaId) {
+  const meta = DOCS_META[docId];
+  if (!meta) return;
+  const ruta = meta.ruta.replace('{id}', sistemaId);
+
+  // ► En producción: sustituir el alert por window.open(ruta, '_blank')
+  alert(`📥 Abriendo: ${meta.label}\nArchivo: ${ruta}\n\n(En producción este botón abre o descarga el archivo real desde tu servidor.)`);
+  // window.open(ruta, '_blank');
+}
+
+function downloadAll() {
+  const s = state.sistemaSeleccionado;
+  if (!s) return;
+  alert(`📦 Descarga del pack completo de ${s.nombre}\n\nEn producción generaría un .zip con todos los documentos listados asociados a este sistema.`);
+}
+
+function exportPrescription() {
+  const s = state.sistemaSeleccionado;
+  if (!s) return;
+
+  const lines = [
+    'CUSHO · PRESCRIPCIÓN TÉCNICA',
+    '═'.repeat(50),
+    `Proyecto: ${state.nombre || '(sin nombre)'}`,
+    `Tipología: ${TIPO_LABELS[state.tipologia] || '—'}`,
+    `Ubicación: ${state.ciudad || state.cp || '—'} · Zona CTE ${state.zonaCP || '—'}`,
+    `Uso: ${USO_LABELS[state.uso]}`,
+    `Sistema recomendado: ${s.nombre}`,
+    '',
+    'TEXTO DE PRESCRIPCIÓN:',
+    '─'.repeat(50),
+    document.getElementById('res-descripcion').innerText,
+    '',
+    'PRESTACIONES:',
+    '─'.repeat(50),
+    ...s.prestaciones.map(r => `${r[0].padEnd(35)} ${r[1]}`)
+  ];
+
+  const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url; a.download = `CUSHO_Prescripcion_${s.id}.txt`; a.click();
+  URL.revokeObjectURL(url);
+}
+
+function restartApp() {
+  state.zonaCP = null; state.ciudad = '';
+  document.getElementById('proyectoNombre').value = '';
+  document.getElementById('tipologia').value = '';
+  document.getElementById('codigoPostal').value = '';
+  document.getElementById('zonaResultado').innerHTML = '';
+  document.getElementById('asesorCard').classList.add('hidden');
+  document.querySelectorAll('#usoGrid .option-card').forEach((c,i) => { c.classList.toggle('selected', i===0); });
+  state.uso = 'ventana'; state.apertura = null; state.estilo = null;
+  goToStep(1);
+}
+
+// INIT
+updateProgress(1);
+</script>
+</body>
+</html>
