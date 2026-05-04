@@ -1,5 +1,64 @@
 <!DOCTYPE html>
 <html lang="es">
+  <section class="buscador">
+  <h2>Buscador de sistemas</h2>
+
+  <label for="uso">Tipo de elemento</label>
+  <select id="uso">
+    <option value="ventana">Ventana</option>
+    <option value="balconera">Balconera</option>
+    <option value="corredera">Corredera</option>
+    <option value="muro_cortina">Muro cortina</option>
+    <option value="puerta">Puerta</option>
+  </select>
+
+  <label for="apertura">Tipo de apertura</label>
+  <select id="apertura">
+    <option value="batiente">Batiente</option>
+    <option value="oscilobatiente">Oscilobatiente</option>
+    <option value="fijo">Fijo</option>
+    <option value="corredera">Corredera</option>
+  </select>
+
+  <label for="estilo">Estilo</label>
+  <select id="estilo">
+    <option value="estandar">Estándar</option>
+    <option value="hoja_oculta">Hoja oculta</option>
+    <option value="minimalista">Minimalista</option>
+  </select>
+
+  <label for="uw">Uw máximo requerido</label>
+  <input id="uw" type="number" step="0.1" placeholder="Ejemplo: 1.6">
+
+  <label for="rw">Rw mínimo requerido</label>
+  <input id="rw" type="number" step="1" placeholder="Ejemplo: 36">
+
+  <div class="checks">
+    <label>
+      <input id="rpt" type="checkbox">
+      Requiere RPT
+    </label>
+
+    <label>
+      <input id="passivhaus" type="checkbox">
+      Requiere Passivhaus
+    </label>
+
+    <label>
+      <input id="rc2" type="checkbox">
+      Requiere RC2
+    </label>
+
+    <label>
+      <input id="rc3" type="checkbox">
+      Requiere RC3
+    </label>
+  </div>
+
+  <button onclick="buscarSistema()">Buscar sistema recomendado</button>
+</section>
+
+<section id="resultado"></section>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -1305,5 +1364,7 @@ function restartApp() {
 // INIT
 updateProgress(1);
 </script>
+    <script src="sistemas.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
