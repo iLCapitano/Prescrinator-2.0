@@ -1,8 +1,44 @@
 const SISTEMAS = [
+      {
+    id: "AWS 50",
+    nombre: "AWS 50",
+    descripcionCorta: "Sistema estándar de ventanas con aislamiento térmico y una profundidad de construcción de 50 mm",
+
+    usos: ["ventana", "balconera"],
+    aperturas: ["batiente", "oscilobatiente", "fijo"],
+    estilos: ["estandar"],
+
+    uw_max: 1.6,
+    rw_min: 36,
+    agua_clase: 5,
+    aire_clase: 4,
+    viento_clase: "A3",
+
+    rpt: true,
+    passivhaus: false,
+    rc2: false,
+    rc3: false,
+
+    descripcion: "El sistema estándar de ventanas con aislamiento térmico y una profundidad de construcción de 50 mm ofrece amplias posibilidades para satisfacer diferentes requisitos de forma integral. La base para ello son las propiedades funcionales y creativas del sistema de aluminio:
+los componentes, que se complementan entre sí, combinan ventajas como caras vistas estrechas y herraje oculto para ventanas de apertura interior y exterior.",
+
+    prestaciones: [
+      ["Profundidad de marco", "50 mm"],
+      ["RPT poliamida", "≥ 25 mm"],
+      ["Transmitancia Uw", "Hasta 1.6 W/m²K"],
+      ["Atenuación acústica", "Desde 36 dB"],
+      ["Permeabilidad al aire", "Clase 4"],
+      ["Estanqueidad al agua", "Clase 5"]
+    ],
+
+    barras: [72, 70, 75],
+
+    docs: ["ficha", "detalles_cad", "bim", "dop", "marcadoCE", "pliego"]
+  },
    {
     id: "AWS 60",
     nombre: "AWS 60",
-    descripcionCorta: "Sistema batiente con RPT",
+    descripcionCorta: "Su versatilidad se basa en la funcionalidad y posibilidades creativas del sistema de aluminio: caras vistas y estrechas y herraje oculto, manual o electromecánico, para ventanas de apertura interior o exterior.",
 
     usos: ["ventana", "balconera"],
     aperturas: ["batiente", "oscilobatiente", "fijo"],
@@ -35,9 +71,9 @@ const SISTEMAS = [
     docs: ["ficha", "detalles_cad", "bim", "dop", "marcadoCE", "pliego"]
   },
    {
-    id: "AWS 60BS",
-    nombre: "AWS 60 bs",
-    descripcionCorta: "Sistema de hoja oculta",
+    id: "AWS 60 BS",
+    nombre: "AWS 60 BS",
+    descripcionCorta: "versión AWS 60 BS (Block System) ofrece una excelente solución para construcciones en hoja oculta con una profundidad de construcción de 60 mm",
 
     usos: ["ventana", "balconera"],
     aperturas: ["batiente", "oscilobatiente", "fijo"],
@@ -107,9 +143,9 @@ const SISTEMAS = [
   },
 
   {
-    id: "cusho_80_hi",
-    nombre: "CUSHO 80 HI",
-    descripcionCorta: "Sistema batiente de altas prestaciones térmicas",
+    id: "AWS 75 PD",
+    nombre: "AWS 75 PD",
+    descripcionCorta: "Máxima transparencia con las mínimas caras vistas",
 
     usos: ["ventana", "balconera"],
     aperturas: ["batiente", "oscilobatiente", "fijo"],
@@ -126,7 +162,7 @@ const SISTEMAS = [
     rc2: true,
     rc3: true,
 
-    descripcion: "Sistema de aluminio de altas prestaciones para proyectos con exigencias térmicas, acústicas y de seguridad elevadas.",
+    descripcion: "Schüco ofrece por primera vez un elemento practicable que cumple de manera óptima dichos requisitos arquitectónicos, con las mínimas caras vistas interiores y exteriores y un excelente aislamiento térmico.",
 
     prestaciones: [
       ["Profundidad de marco", "80 mm"],
